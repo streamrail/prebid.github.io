@@ -6,33 +6,36 @@ sidebarType: 1
 ---
 
 # How to Add a Video Submodule
+
 {:.no_toc}
 
 Video submodules interact with the Video Module to integrate Prebid with Video Players, allowing Prebid to automatically:
-- render bids in the desired video player.
-- mark used bids as won.
-- trigger player and media events.
-- populate the oRTB Video Impression and Content params in the bid request.
+
+* render bids in the desired video player.
+* mark used bids as won.
+* trigger player and media events.
+* populate the oRTB Video Impression and Content params in the bid request.
 
 * TOC
-  {:toc }
+{:toc }
 
 ## Overview
 
 The Prebid Video Module simplifies the way Prebid integrates with video players by acting as a single point of contact for everything video.
 In order for the Video Module to connect to a video player, a submodule must be implemented. The submodule acts as a bridge between the Video Module and the video player.
 The Video Module will route commands and tasks to the appropriate submodule instance.
-A submodule is expected to work for a specific video player. i.e. the JW Player submodule is used to integrate Prebid with JW Player. The video.js submdule connects to video.js. 
+A submodule is expected to work for a specific video player. i.e. the JW Player submodule is used to integrate Prebid with JW Player. The video.js submdule connects to video.js.
 Publishers who use players from different vendors on the same page can use multiple video submodules.
 
 ## Requirements
 
 The Video Module only supports integration with Video Players that meet the following requirements:
-- Must support parsing and reproduction of VAST ads.
-  - Input can be an ad tag URL or the actual Vast XML.
-- Must expose an API that allows the procurement of [Open RTB params](https://www.iab.com/wp-content/uploads/2016/03/OpenRTB-API-Specification-Version-2-5-FINAL.pdf) for Video (section 3.2.7) and Content (section 3.2.16).
-- Must emit javascript events for Ads and Media.
-  - see [Event Registration](#event-registration).
+
+* Must support parsing and reproduction of VAST ads.
+  * Input can be an ad tag URL or the actual Vast XML.
+* Must expose an API that allows the procurement of [Open RTB params](https://www.iab.com/wp-content/uploads/2016/03/OpenRTB-API-Specification-Version-2-5-FINAL.pdf) for Video (section 3.2.7) and Content (section 3.2.16).
+* Must emit javascript events for Ads and Media.
+  * see [Event Registration](#event-registration).
 
 ## Creating a Submodule
 
@@ -44,12 +47,13 @@ Working with any Prebid project requires using Github. In general, we recommend 
 4. Open a [pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) to the appropriate repository's master branch with a good description of the feature/bug fix.
 5. If there's something that needs to change on the prebid.org website, follow the above steps for the [website repo](https://github.com/prebid/prebid.github.io).
 
-### Step 1: Add a markdown file describing the submodule
+### Step 1: Add a Markdown File Describing the Submodule
 
 Create a markdown file under `modules` with the name of the module suffixed with 'VideoProvider', i.e. `exampleVideoProvider.md`.
 
 Example markdown file:
-{% highlight text %}
+
+```md
 # Overview
 
 Module Name: Example Video Provider
@@ -66,18 +70,18 @@ Video provider for Example Player. Contact someone@example.com for information.
 
 Your page must link the Example Player build from our CDN. Alternatively you can use npm to load the build.
 
-{% endhighlight %}
+```
 
 ### Step 2: Add a Vendor Code
 
 Vendor codes are required to indicate which submodule type to instantiate. Add your vendor code constant to an export const in `vendorCodes.js` in Prebid.js under `libraries/video/constants/vendorCodes.js`.
 i.e. in `vendorCodes.js`:
 
-{% highlight text %}
+```javascript
 export const EXAMPLE_PLAYER_VENDOR = 3;
-{% endhighlight %}
+```
 
-### Step 2: Build the Module
+### Step 3: Build the Module
 
 Now create a javascript file under `modules` with the name of the module suffixed with 'VideoProvider', e.g., `exampleVideoProvider.js`.
 
@@ -89,7 +93,7 @@ Your submodule should also import the `submodule` function from `src/hook.js` an
 
 **Code Example**
 
-{% highlight text %}
+```javascript
 import { submodule } from '../src/hook.js';
 
 function exampleSubmoduleFactory(videoProviderConfig) {
@@ -102,11 +106,12 @@ function exampleSubmoduleFactory(videoProviderConfig) {
 
 exampleSubmoduleFactory.vendorCode = EXAMPLE_VENDOR;
 submodule('video', exampleSubmoduleFactory);
-{% endhighlight %}
+```
 
 #### The Submodule object
 
 The submodule object must adhere to the following interface:
+
 {: .table .table-bordered .table-striped }
 |  param name | type  | Scope | Description | Arguments | Return type |
 | :---------- | :---- | :---- | :---------- | :-------- | :---------- |
@@ -120,7 +125,8 @@ The submodule object must adhere to the following interface:
 | destroy | function | required | Deallocates the submodule and destroys the associated video player. n/a | void | void |
 
 For example:
-{% highlight text %}
+
+```javascript
 const exampleSubmodule =  {
   init: init,
   getId: getId,
@@ -131,11 +137,11 @@ const exampleSubmodule =  {
   offEvent: offEvent,
   destroy: destroy
 };
-{% endhighlight %}
+```
 
-<a name="event-registration" />
+<a name="event-registration"></a>
 
-#### Event registration
+#### Event Registration
 
 Submodules must support attaching and detaching event listeners on the video player. The list of events and their respective params are defined in the [Video Module docs's Events section]({{site.github.url}}/prebid-video/video-module.html#events).
 
@@ -157,7 +163,8 @@ Submodules must support attaching and detaching event listeners on the video pla
 #### Update .submodules.json
 
 In prebid.js, add your new submodule to `.submodules.json` under the `videoModule` as such:
-{% highlight text %}
+
+```json
 {
   "parentModules": {
     "videoModule": [
@@ -165,9 +172,9 @@ In prebid.js, add your new submodule to `.submodules.json` under the `videoModul
     ]
   }
 }
-{% endhighlight %}
+```
 
-### Shared resources for developers
+## Shared Resources for Developers
 
 A video library containing reusable code and constants has been added to Prebid.js for your convenience. We encourage you to import from this library.
 Constants such as event names can be found in the `libraries/video/constants/` folder.

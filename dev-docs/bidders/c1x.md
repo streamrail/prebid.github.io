@@ -6,14 +6,12 @@ pbs: false
 pbjs: true
 biddercode: c1x
 media_types: banner
-gdpr_supported: true
+tcfeu_supported: false
 pbs_app_supported: false
-enable_download: false
-pbjs_version_notes: not ported to 5.x
-sidebarType: 1
+enable_download: true
 ---
 
-### Note:
+### Note
 
 The C1X Header Bidding adaptor requires approval from the C1X team. Please reach out to  <header-bidding@c1exchange.com> for more information.
 
